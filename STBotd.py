@@ -255,7 +255,7 @@ def listShows(path, forBackLog=False):
 			i = item.split('=')
 			if len(i) > 0:
 				local = i[0].strip()
-				dist = i[1].strip().lower()
+				dist = i[1].strip().translate(trans, '\'().!').lower()
 				shows[dist] = local	
 				log.debug('Extra TV shows mapping : %s => %s' % (dist, local) )
 
