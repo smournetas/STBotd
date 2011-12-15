@@ -313,6 +313,10 @@ def episodeAttributes(file, show):
 	attr['alt_number'] = alt_number
 	attr['release'] = release.lower()
 	attr['alt_release'] = release[0:3].lower()
+	if attr['alt_release'] == "p0w":
+		attr['alt_release2'] = "pow"
+	else:
+		attr['alt_release2'] = attr['alt_release']
 	attr['subrelease'] = subrelease.lower()
 
  	return attr
@@ -416,6 +420,7 @@ def getSuitableFilesListFromZip(file, ep, file_ext, prefix='', indent=''):
 
 	release = ep['release']
 	alt_release = ep['alt_release']
+	alt_release2 = ep['alt_release2']
 
 	if prefix == '':
 		prefix, _ = os.path.splitext(file)
@@ -442,7 +447,7 @@ def getSuitableFilesListFromZip(file, ep, file_ext, prefix='', indent=''):
 		else:
 			full_name = prefix + '/' + unicode(info.filename, 'iso-8859-1')
 			if not re.match('.+[\.\- ](' + config['process.exclude'] + ')[\.\- ]', full_name, re.IGNORECASE) \
-			and re.match('.+[\.\- ](' + release + '|' + alt_release + ')[\.\- ].*(' + file_ext + ')$', full_name, re.IGNORECASE):
+			and re.match('.+[\.\-\ ](' + release + '|' + alt_release + '|' + alt_release2 + ')[\.\-\ ].*(' + file_ext + ')$', full_name, re.IGNORECASE):
 				log.info(indent + '[X] File ' + os.path.relpath(full_name, TMP_DIR))
 				matches.append(full_name)
 				zip.extract(info, prefix)
