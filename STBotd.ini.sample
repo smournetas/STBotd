@@ -1,0 +1,29 @@
+[shows]
+path = /Path/To/Shows/
+
+[rss]
+url = http://www.sous-titres.eu/series.xml
+backlog = http://www.sous-titres.eu/series/<show>.xml
+mapping = Louie (2010)=Louie
+
+[process]
+test = false
+file_ext = ass, srt
+tags = true
+exclude = EN, VO, Karaok., nolyrics, traduite
+rename = true
+
+[email]
+notify = true
+from = me@mail.com
+to = me@mail.com
+
+[smtp]
+server = smtp.server.com
+port = 25
+username = user
+password = pass
+
+[log]
+level = INFO
+onscreen = false
