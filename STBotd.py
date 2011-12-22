@@ -18,7 +18,7 @@ from datetime import datetime
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/lib/')
 import feedparser
 
-PRG_VERSION = '0.6.1 EatMyShorts'
+PRG_VERSION = '0.6.2 EatMyShorts'
 PRG_NAME, _ = os.path.splitext(os.path.basename(__file__))
 WRK_DIR = os.path.dirname(os.path.abspath(__file__))
 TMP_DIR = WRK_DIR + '/tmp'
@@ -447,7 +447,9 @@ def getSuitableFilesListFromZip(file, ep, file_ext, prefix='', indent=''):
 		else:
 			full_name = prefix + '/' + unicode(info.filename, 'iso-8859-1')
 			if not re.match('.+[\.\- ](' + config['process.exclude'] + ')[\.\- ]', full_name, re.IGNORECASE) \
-			and re.match('.+[\.\-\ ](' + release + '|' + alt_release + '|' + alt_release2 + ')[\.\-\ ].*(' + file_ext + ')$', full_name, re.IGNORECASE):
+			and ( re.match('.+[\.\-\ ](' + release + ').*(' + file_ext + ')$', full_name, re.IGNORECASE) \
+				or re.match('.+(' + release + ')[\.\-\ ].*(' + file_ext + ')$', full_name, re.IGNORECASE) \
+				or re.match('.+[\.\-\ ](' + alt_release + '|' + alt_release2 + ')[\.\-\ ].*(' + file_ext + ')$', full_name, re.IGNORECASE) ):
 				log.info(indent + '[X] File ' + os.path.relpath(full_name, TMP_DIR))
 				matches.append(full_name)
 				zip.extract(info, prefix)
