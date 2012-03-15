@@ -14,11 +14,10 @@ import quopri
 import getopt
 from datetime import datetime
 
-
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/lib/')
 import feedparser
 
-PRG_VERSION = '0.6.1 EatMyShorts'
+PRG_VERSION = '0.6.2 EatMyShorts'
 PRG_NAME, _ = os.path.splitext(os.path.basename(__file__))
 WRK_DIR = os.path.dirname(os.path.abspath(__file__))
 TMP_DIR = WRK_DIR + '/tmp'
@@ -370,7 +369,10 @@ def saveSubtitleFiles(files, path, ep, url, backlog):
 			if not config['process.test']:
 				shutil.move(member, path + '/' + dest_file)
 				if not backlog:
-					sendNotification('%s has retrieved subtitles for %s S%dE%02d' % (PRG_NAME, ep['show'], ep['season'], ep['number']), notif_msg)
+					if ep['number'] != ep['alt_number']:
+						sendNotification('%s has retrieved subtitles for %s S%dE%02d-E%02d' % (PRG_NAME, ep['show'], ep['season'], ep['number'], ep['alt_number']), notif_msg)
+					else:
+						sendNotification('%s has retrieved subtitles for %s S%dE%02d' % (PRG_NAME, ep['show'], ep['season'], ep['number']), notif_msg)
 				else:
 					saved.append(dest_file)
 
@@ -447,7 +449,9 @@ def getSuitableFilesListFromZip(file, ep, file_ext, prefix='', indent=''):
 		else:
 			full_name = prefix + '/' + unicode(info.filename, 'iso-8859-1')
 			if not re.match('.+[\.\- ](' + config['process.exclude'] + ')[\.\- ]', full_name, re.IGNORECASE) \
-			and re.match('.+[\.\-\ ](' + release + '|' + alt_release + '|' + alt_release2 + ')[\.\-\ ].*(' + file_ext + ')$', full_name, re.IGNORECASE):
+			and ( re.match('.+[\.\-\ ](' + release + ').*(' + file_ext + ')$', full_name, re.IGNORECASE) \
+				or re.match('.+(' + release + ')[\.\-\ ].*(' + file_ext + ')$', full_name, re.IGNORECASE) \
+				or re.match('.+[\.\-\ ](' + alt_release + '|' + alt_release2 + ')[\.\-\ ].*(' + file_ext + ')$', full_name, re.IGNORECASE) ):
 				log.info(indent + '[X] File ' + os.path.relpath(full_name, TMP_DIR))
 				matches.append(full_name)
 				zip.extract(info, prefix)
@@ -565,6 +569,7 @@ def backLogSearch():
 			log.debug(error)
 	
 def main():
+
 	try:
 		opts, args = getopt.getopt(sys.argv[1:], "b", ['backlog'])
 	except getopt.GetoptError:
@@ -605,5 +610,3 @@ if __name__ == '__main__':
 	log = Logger(LOG_DIR + '/' + PRG_NAME + '_' + time.strftime('%Y%m%d') + '.log')
 
 	main()
-
-
